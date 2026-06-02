@@ -4,22 +4,22 @@
 
 :root {
   color-scheme: light;
-  --color-bg: 242 243 245;
-  --color-surface: 250 250 251;
-  --color-ink: 23 29 38;
-  --color-muted: 75 85 99;
-  --color-border: 205 211 220;
-  --color-accent: 188 73 34;
+  --color-bg: 246 244 238;
+  --color-surface: 252 250 246;
+  --color-ink: 27 31 36;
+  --color-muted: 91 96 104;
+  --color-border: 216 207 192;
+  --color-accent: 177 86 42;
 }
 
 :root.dark {
   color-scheme: dark;
-  --color-bg: 16 20 24;
-  --color-surface: 22 28 33;
-  --color-ink: 230 235 241;
-  --color-muted: 157 172 189;
-  --color-border: 62 74 88;
-  --color-accent: 239 151 74;
+  --color-bg: 17 22 27;
+  --color-surface: 23 30 36;
+  --color-ink: 228 233 239;
+  --color-muted: 161 173 186;
+  --color-border: 67 79 92;
+  --color-accent: 231 151 86;
 }
 
 * {
@@ -35,6 +35,9 @@ body {
 body {
   @apply bg-bg text-ink font-sans antialiased;
   line-height: 1.6;
+  background-image:
+    radial-gradient(900px 500px at 0% -10%, rgb(var(--color-accent) / 0.1), transparent 65%),
+    radial-gradient(700px 400px at 100% -5%, rgb(var(--color-border) / 0.22), transparent 55%);
 }
 
 h1,
@@ -43,18 +46,82 @@ h3,
 h4,
 h5,
 h6 {
-  @apply font-sans tracking-tight;
+  @apply font-serif tracking-tight;
 }
 
 code,
 pre,
 kbd,
 samp {
-  font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 ::selection {
   background: rgb(var(--color-accent) / 0.28);
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--color-accent));
+  outline-offset: 2px;
+}
+
+.page-shell {
+  position: relative;
+}
+
+.ambient-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(520px 280px at 12% 78%, rgb(var(--color-accent) / 0.08), transparent 72%),
+    radial-gradient(460px 260px at 86% 84%, rgb(var(--color-border) / 0.2), transparent 70%);
+}
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.25rem;
+  height: 1px;
+  width: 100%;
+  background: rgb(var(--color-accent));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 180ms ease;
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-reveal {
+  animation: rise-in 360ms ease both;
+}
+
+.stagger-reveal:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.stagger-reveal:nth-child(3) {
+  animation-delay: 140ms;
 }
 
 .code-block {
@@ -62,7 +129,7 @@ samp {
 }
 
 .copy-code {
-  @apply absolute right-3 top-3 rounded border border-border bg-surface px-2 py-1 text-xs text-muted transition;
+  @apply absolute right-3 top-3 rounded border border-border bg-surface/95 px-2 py-1 text-xs text-muted transition;
 }
 
 .copy-code:hover {
@@ -71,6 +138,72 @@ samp {
 
 .copy-code.is-copied {
   @apply border-accent text-accent;
+}
+
+.post-card {
+  @apply rounded-2xl border border-border bg-surface/90 shadow-sm transition duration-300;
+}
+
+.post-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgb(var(--color-ink) / 0.08);
+}
+
+.article-shell {
+  @apply mx-auto w-full max-w-[40.75rem];
+}
+
+.article-stage {
+  @apply relative w-full;
+}
+
+.article-toc {
+  @apply bg-transparent p-0;
+}
+
+.article-toc-rail {
+  @apply mt-10;
+}
+
+@media (min-width: 1280px) {
+  .article-toc-rail {
+    position: fixed;
+    top: 6rem;
+    left: calc(50% + 24.5rem);
+    width: 15rem;
+    margin-top: 0;
+    max-height: calc(100vh - 7.5rem);
+    overflow: auto;
+  }
+}
+
+.article-toc-title {
+  @apply mb-3 text-sm font-semibold tracking-[0.02em] text-ink;
+}
+
+.article-toc-list {
+  @apply m-0 list-none space-y-2 p-0;
+}
+
+.article-toc-link {
+  @apply block text-sm leading-6 text-muted transition hover:text-ink;
+}
+
+.article-toc-link-nested {
+  @apply pl-4 text-[0.92rem];
+}
+
+.article-toc-backtop {
+  @apply mt-4 hidden items-center gap-2 text-sm text-muted transition duration-200 hover:text-ink;
+}
+
+.article-toc-backtop.is-visible {
+  @apply inline-flex;
+}
+
+.article-toc-backtop.is-clicked {
+  transform: translateY(-1px) scale(0.98);
+  opacity: 0.72;
 }
 
 .tag-filter {
@@ -86,5 +219,6 @@ samp {
 }
 
 .post-content {
-  @apply text-[1.12rem];
+  @apply text-[1.12rem] leading-8;
 }
+
