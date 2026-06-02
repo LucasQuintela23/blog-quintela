@@ -1,6 +1,6 @@
 ---
 title: "A Linha de Produção Não Engana: O Abismo Técnico entre Garantia da Qualidade (QA) e Controle de Qualidade (QC)"
-pubDate: 2026-06-01T12:00:00
+pubDate: 2026-06-02T12:00:00
 description: "Uma análise direta sobre as diferenças técnicas entre QA e QC, com foco em engenharia de processo, testes e custo operacional em sistemas complexos."
 tags:
   - qa

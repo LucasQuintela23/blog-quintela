@@ -4,11 +4,11 @@
 
 :root {
   color-scheme: light;
-  --color-bg: 246 244 238;
-  --color-surface: 252 250 246;
+  --color-bg: 255 255 255;
+  --color-surface: 248 250 252;
   --color-ink: 27 31 36;
   --color-muted: 91 96 104;
-  --color-border: 216 207 192;
+  --color-border: 226 232 240;
   --color-accent: 177 86 42;
 }
 
@@ -35,6 +35,10 @@ body {
 body {
   @apply bg-bg text-ink font-sans antialiased;
   line-height: 1.6;
+  background-image: none;
+}
+
+:root.dark body {
   background-image:
     radial-gradient(900px 500px at 0% -10%, rgb(var(--color-accent) / 0.1), transparent 65%),
     radial-gradient(700px 400px at 100% -5%, rgb(var(--color-border) / 0.22), transparent 55%);
@@ -74,6 +78,11 @@ samp {
   inset: 0;
   pointer-events: none;
   z-index: -1;
+  display: none;
+}
+
+:root.dark .ambient-glow {
+  display: block;
   background:
     radial-gradient(520px 280px at 12% 78%, rgb(var(--color-accent) / 0.08), transparent 72%),
     radial-gradient(460px 260px at 86% 84%, rgb(var(--color-border) / 0.2), transparent 70%);
@@ -141,12 +150,11 @@ samp {
 }
 
 .post-card {
-  @apply rounded-2xl border border-border bg-surface/90 shadow-sm transition duration-300;
+  @apply border-b border-border bg-transparent transition duration-200;
 }
 
 .post-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgb(var(--color-ink) / 0.08);
+  border-color: rgb(var(--color-accent) / 0.45);
 }
 
 .article-shell {
