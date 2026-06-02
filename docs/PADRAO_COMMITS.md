@@ -26,10 +26,17 @@ docs(readme): atualizar instrucoes de execucao
 ## Regras Gerais
 
 - Escreva a descricao no imperativo: adicionar, corrigir, remover, refatorar.
+- Escreva o texto do commit em portugues brasileiro (pt-BR).
 - Comece com letra minuscula apos os dois pontos.
 - Seja objetivo no titulo (ideal ate 72 caracteres).
 - Use escopo quando ajudar no contexto: theme, posts, layout, ci, docs.
 - Evite commits grandes com assuntos misturados.
+
+Exemplo de idioma esperado:
+
+```text
+feat(posts): adicionar secao de referencias tecnicas
+```
 
 ## Tipos Aceitos
 
