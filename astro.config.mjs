@@ -4,7 +4,7 @@ import tailwind from "@astrojs/tailwind";
 
 export default defineConfig({
   site: "https://lucasquintela23.github.io",
-  base: "/blog-quintela",
+  base: "/blog-quintela/",
   integrations: [
     mdx(),
     tailwind({
