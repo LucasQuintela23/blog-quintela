@@ -10,6 +10,8 @@ const {
   title = "Quintela.QA",
   description = "Blog técnico focado em performance, legibilidade e tipografia editorial.",
 } = Astro.props;
+
+const baseUrl = import.meta.env.BASE_URL;
 ---
 
 <!doctype html>
@@ -41,11 +43,11 @@ const {
     <div class="mx-auto flex min-h-screen w-full max-w-[1240px] flex-col px-4 sm:px-6">
       <header class="border-b border-border py-4">
         <div class="flex items-center justify-between">
-          <a href="/" class="text-lg font-semibold tracking-tight text-ink">Quintela.QA</a>
+          <a href={baseUrl} class="text-lg font-semibold tracking-tight text-ink">Quintela.QA</a>
 
           <nav class="flex items-center gap-4 text-xs uppercase tracking-[0.1em] text-muted sm:text-sm sm:normal-case sm:tracking-normal">
-            <a href="/" class="transition hover:text-ink">Artigos</a>
-            <a href="/sobre" class="transition hover:text-ink">Sobre</a>
+            <a href={baseUrl} class="transition hover:text-ink">Artigos</a>
+            <a href={`${baseUrl}sobre/`} class="transition hover:text-ink">Sobre</a>
             <button
               id="theme-toggle"
               type="button"
