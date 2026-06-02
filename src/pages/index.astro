@@ -1,9 +1,10 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-const posts = (await getCollection("blog")).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+const posts: CollectionEntry<"blog">[] = (await getCollection("blog")).sort(
+  (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
+    b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
 
 const formatDate = (date: Date) =>
@@ -21,18 +22,18 @@ const postHref = (slug: string) => `${baseUrl}${slug}/`;
 ---
 
 <BaseLayout
-  title="Quintela.QA | Engenharia de Software"
+  title="Quintela | Engenharia de Software"
   description="Artigos técnicos sobre performance, testes, automação e legibilidade de código."
 >
-  <section class="grid gap-4" id="posts-grid">
+  <section class="grid gap-6" id="posts-grid">
     {
       posts.map((post) => (
-        <article class="post-card rounded-xl border border-border bg-surface px-5 py-6 transition hover:border-accent/60">
-          <h2 class="mb-3 text-[2rem] font-semibold leading-tight text-ink">
+        <article class="post-card stagger-reveal px-5 py-6 sm:px-6 sm:py-7">
+          <h2 class="mb-3 font-serif text-[2rem] font-semibold leading-tight text-ink sm:text-[2.15rem]">
             <a href={postHref(post.slug)} class="transition hover:text-accent">{post.data.title}</a>
           </h2>
-          <p class="mb-5 max-w-5xl text-[1.02rem] leading-relaxed text-muted">{post.data.description}</p>
-          <div class="flex flex-wrap items-center gap-3 text-sm uppercase tracking-[0.08em] text-muted">
+          <p class="mb-5 max-w-5xl text-[1.05rem] leading-relaxed text-muted">{post.data.description}</p>
+          <div class="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.12em] text-muted">
             <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
           </div>
         </article>

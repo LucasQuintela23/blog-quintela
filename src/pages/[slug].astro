@@ -1,9 +1,10 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
+import type { MarkdownHeading } from "astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts: CollectionEntry<"blog">[] = await getCollection("blog");
 
   return posts.map((post) => ({
     params: { slug: post.slug },
@@ -11,8 +12,11 @@ export async function getStaticPaths() {
   }));
 }
 
-const { post } = Astro.props;
-const { Content } = await post.render();
+const { post } = Astro.props as { post: CollectionEntry<"blog"> };
+const { Content, headings } = await post.render();
+const tocHeadings: MarkdownHeading[] = headings.filter(
+  (item: MarkdownHeading) => item.depth === 2 || item.depth === 3,
+);
 
 const formattedDate = post.data.pubDate.toLocaleDateString("pt-BR", {
   day: "2-digit",
@@ -21,22 +25,87 @@ const formattedDate = post.data.pubDate.toLocaleDateString("pt-BR", {
 });
 ---
 
-<BaseLayout title={`${post.data.title} | Quintela.QA`} description={post.data.description}>
-  <article class="w-full">
-    <header class="mb-8 border-b border-border pb-6">
-      <h1 class="mb-3 text-4xl font-extrabold leading-tight text-ink sm:text-5xl">{post.data.title}</h1>
-      <time class="text-sm uppercase tracking-[0.08em] text-muted" datetime={post.data.pubDate.toISOString()}>
-        {formattedDate}
-      </time>
-    </header>
+<BaseLayout title={`${post.data.title} | Quintela`} description={post.data.description}>
+  <div class="article-stage">
+    <div id="post-top-sentinel" aria-hidden="true"></div>
+    <article class="article-shell w-full">
+      <header class="mb-10 border-b border-border pb-7 text-center">
+        <h1 class="mx-auto mb-4 max-w-4xl font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">{post.data.title}</h1>
+        <time class="text-xs uppercase tracking-[0.12em] text-muted" datetime={post.data.pubDate.toISOString()}>
+          {formattedDate}
+        </time>
+      </header>
 
-    <div class="post-content prose prose-neutral max-w-none text-justify dark:prose-invert">
-      <Content />
-    </div>
-  </article>
+      <div class="post-content prose prose-neutral max-w-none text-justify dark:prose-invert">
+        <Content />
+      </div>
+    </article>
+
+    {
+      tocHeadings.length > 0 && (
+        <aside class="article-toc article-toc-rail" aria-label="Nesta página">
+          <p class="article-toc-title">Nesta página</p>
+          <ul class="article-toc-list">
+            {tocHeadings.map((item) => (
+              <li>
+                <a
+                  href={`#${item.slug}`}
+                  class:list={[
+                    "article-toc-link",
+                    item.depth === 3 && "article-toc-link-nested",
+                  ]}
+                >
+                  {item.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="#top" id="toc-back-to-top" class="article-toc-backtop">
+            <span>Voltar ao topo</span>
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="m8 14 4-4 4 4"></path>
+            </svg>
+          </a>
+        </aside>
+      )
+    }
+  </div>
 
   <script is:inline>
     const codeBlocks = document.querySelectorAll("article pre");
+    const tocBackToTop = document.getElementById("toc-back-to-top");
+    const topSentinel = document.getElementById("post-top-sentinel");
+
+    const setBackToTopVisibility = (shouldShow) => {
+      if (!tocBackToTop) return;
+      tocBackToTop.classList.toggle("is-visible", shouldShow);
+    };
+
+    if (topSentinel && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setBackToTopVisibility(!entry.isIntersecting);
+        },
+        { root: null, threshold: 0 },
+      );
+      observer.observe(topSentinel);
+    } else {
+      const onScroll = () => setBackToTopVisibility(window.scrollY > 220);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
+    tocBackToTop?.addEventListener("click", (event) => {
+      event.preventDefault();
+      tocBackToTop.classList.add("is-clicked");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      setTimeout(() => {
+        tocBackToTop.classList.remove("is-clicked");
+      }, 220);
+    });
 
     codeBlocks.forEach((pre) => {
       if (pre.querySelector(".copy-code")) return;

@@ -15,9 +15,9 @@ export default {
         accent: "rgb(var(--color-accent) / <alpha-value>)"
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        serif: ["Georgia", "Cambria", "Times New Roman", "serif"],
-        mono: ["Fira Code", "ui-monospace", "SFMono-Regular", "monospace"]
+        sans: ["Source Sans 3", "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: ["Source Serif 4", "Iowan Old Style", "Georgia", "serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"]
       },
       typography: ({ theme }) => ({
         DEFAULT: {

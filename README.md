@@ -1,4 +1,4 @@
-# Quintela.QA
+# Quintela
 
 Blog tecnico em Astro com foco em performance, legibilidade e tipografia editorial.
 
