@@ -2,6 +2,11 @@
 
 Este projeto adota commits semanticos inspirados em Conventional Commits e no guia iuricode/padroes-de-commits.
 
+## Guias Relacionados
+
+- Publicacoes e fluxo editorial: docs/PADRAO_PUBLICACOES.md
+- Versionamento da estrutura do projeto: docs/VERSIONAMENTO.md
+
 ## Formato
 
 Use o formato abaixo no titulo do commit:
