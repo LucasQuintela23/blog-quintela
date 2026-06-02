@@ -1,0 +1,89 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Quintela.QA",
+  description = "Blog técnico focado em performance, legibilidade e tipografia editorial.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      (() => {
+        const persisted = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDark = persisted ? persisted === "dark" : prefersDark;
+        document.documentElement.classList.toggle("dark", isDark);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div class="mx-auto flex min-h-screen w-full max-w-[1240px] flex-col px-4 sm:px-6">
+      <header class="border-b border-border py-4">
+        <div class="flex items-center justify-between">
+          <a href="/" class="text-lg font-semibold tracking-tight text-ink">Quintela.QA</a>
+
+          <nav class="flex items-center gap-4 text-xs uppercase tracking-[0.1em] text-muted sm:text-sm sm:normal-case sm:tracking-normal">
+            <a href="/" class="transition hover:text-ink">Artigos</a>
+            <a href="/sobre" class="transition hover:text-ink">Sobre</a>
+            <button
+              id="theme-toggle"
+              type="button"
+              class="rounded-full border border-border px-3 py-1 text-xs font-medium text-muted transition hover:text-ink"
+              aria-label="Alternar tema"
+            >
+              Tema
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      <main class="flex-1 py-8 sm:py-10">
+        <slot />
+      </main>
+
+      <footer class="border-t border-border py-6 text-sm text-muted">
+        <p>Documentando pesquisas, fundamentos e boas práticas em Engenharia de Software e qualidade.</p>
+      </footer>
+    </div>
+
+    <script is:inline>
+      const button = document.getElementById("theme-toggle");
+      const root = document.documentElement;
+
+      const setThemeLabel = () => {
+        if (!button) return;
+        const dark = root.classList.contains("dark");
+        button.textContent = dark ? "Dark" : "Light";
+      };
+
+      setThemeLabel();
+
+      button?.addEventListener("click", () => {
+        root.classList.toggle("dark");
+        localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
+        setThemeLabel();
+      });
+    </script>
+  </body>
+</html>

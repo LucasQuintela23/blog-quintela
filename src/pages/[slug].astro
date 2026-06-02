@@ -1,0 +1,74 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const formattedDate = post.data.pubDate.toLocaleDateString("pt-BR", {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<BaseLayout title={`${post.data.title} | Quintela.QA`} description={post.data.description}>
+  <article class="w-full">
+    <header class="mb-8 border-b border-border pb-6">
+      <h1 class="mb-3 text-4xl font-extrabold leading-tight text-ink sm:text-5xl">{post.data.title}</h1>
+      <time class="text-sm uppercase tracking-[0.08em] text-muted" datetime={post.data.pubDate.toISOString()}>
+        {formattedDate}
+      </time>
+    </header>
+
+    <div class="post-content prose prose-neutral max-w-none text-justify dark:prose-invert">
+      <Content />
+    </div>
+  </article>
+
+  <script is:inline>
+    const codeBlocks = document.querySelectorAll("article pre");
+
+    codeBlocks.forEach((pre) => {
+      if (pre.querySelector(".copy-code")) return;
+
+      pre.classList.add("code-block");
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy-code";
+      button.textContent = "Copiar";
+
+      button.addEventListener("click", async () => {
+        const code = pre.querySelector("code");
+        const content = code?.textContent ?? "";
+
+        try {
+          await navigator.clipboard.writeText(content);
+          button.textContent = "Copiado";
+          button.classList.add("is-copied");
+          setTimeout(() => {
+            button.textContent = "Copiar";
+            button.classList.remove("is-copied");
+          }, 1200);
+        } catch {
+          button.textContent = "Erro";
+          setTimeout(() => {
+            button.textContent = "Copiar";
+          }, 1200);
+        }
+      });
+
+      pre.appendChild(button);
+    });
+  </script>
+</BaseLayout>

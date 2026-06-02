@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-bg: 242 243 245;
+  --color-surface: 250 250 251;
+  --color-ink: 23 29 38;
+  --color-muted: 75 85 99;
+  --color-border: 205 211 220;
+  --color-accent: 188 73 34;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --color-bg: 16 20 24;
+  --color-surface: 22 28 33;
+  --color-ink: 230 235 241;
+  --color-muted: 157 172 189;
+  --color-border: 62 74 88;
+  --color-accent: 239 151 74;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-sans tracking-tight;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+::selection {
+  background: rgb(var(--color-accent) / 0.28);
+}
+
+.code-block {
+  position: relative;
+}
+
+.copy-code {
+  @apply absolute right-3 top-3 rounded border border-border bg-surface px-2 py-1 text-xs text-muted transition;
+}
+
+.copy-code:hover {
+  @apply text-ink;
+}
+
+.copy-code.is-copied {
+  @apply border-accent text-accent;
+}
+
+.tag-filter {
+  @apply rounded-full border border-border bg-surface px-3 py-1 text-xs uppercase tracking-[0.08em] text-muted transition;
+}
+
+.tag-filter:hover {
+  @apply border-accent/70 text-ink;
+}
+
+.tag-filter.is-active {
+  @apply border-accent bg-accent/10 text-ink;
+}
+
+.post-content {
+  @apply text-[1.12rem];
+}

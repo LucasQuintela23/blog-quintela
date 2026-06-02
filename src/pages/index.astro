@@ -1,0 +1,36 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+---
+
+<BaseLayout
+  title="Quintela.QA | Engenharia de Software"
+  description="Artigos técnicos sobre performance, testes, automação e legibilidade de código."
+>
+  <section class="grid gap-4" id="posts-grid">
+    {
+      posts.map((post) => (
+        <article class="post-card rounded-xl border border-border bg-surface px-5 py-6 transition hover:border-accent/60">
+          <h2 class="mb-3 text-[2rem] font-semibold leading-tight text-ink">
+            <a href={`/${post.slug}`} class="transition hover:text-accent">{post.data.title}</a>
+          </h2>
+          <p class="mb-5 max-w-5xl text-[1.02rem] leading-relaxed text-muted">{post.data.description}</p>
+          <div class="flex flex-wrap items-center gap-3 text-sm uppercase tracking-[0.08em] text-muted">
+            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>
