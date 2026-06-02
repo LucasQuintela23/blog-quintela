@@ -16,6 +16,10 @@ const formatDate = (date: Date) =>
 const baseUrl = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+
+const siteUrl = Astro.site ?? new URL("https://lucasquintela23.github.io");
+const postHref = (slug: string) => `${baseUrl}${slug}/`;
+const postUrl = (slug: string) => new URL(postHref(slug), siteUrl).toString();
 ---
 
 <BaseLayout
@@ -27,12 +31,18 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
       posts.map((post) => (
         <article class="post-card rounded-xl border border-border bg-surface px-5 py-6 transition hover:border-accent/60">
           <h2 class="mb-3 text-[2rem] font-semibold leading-tight text-ink">
-            <a href={`${baseUrl}${post.slug}/`} class="transition hover:text-accent">{post.data.title}</a>
+            <a href={postHref(post.slug)} class="transition hover:text-accent">{post.data.title}</a>
           </h2>
           <p class="mb-5 max-w-5xl text-[1.02rem] leading-relaxed text-muted">{post.data.description}</p>
           <div class="flex flex-wrap items-center gap-3 text-sm uppercase tracking-[0.08em] text-muted">
             <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
           </div>
+          <a
+            href={postHref(post.slug)}
+            class="mt-3 inline-block text-sm normal-case tracking-normal text-accent underline underline-offset-4 transition hover:text-ink"
+          >
+            {postUrl(post.slug)}
+          </a>
         </article>
       ))
     }
