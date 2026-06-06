@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 460" width="980" height="460">
+  <rect x="0" y="0" width="980" height="460" fill="#ffffff"/>
+
+  <line x1="80" y1="50" x2="80" y2="360" stroke="#202020" stroke-width="2"/>
+  <line x1="80" y1="360" x2="700" y2="360" stroke="#202020" stroke-width="2"/>
+
+  <line x1="80" y1="360" x2="700" y2="360" stroke="#d7d7d7" stroke-width="1"/>
+  <line x1="80" y1="298" x2="700" y2="298" stroke="#d7d7d7" stroke-width="1"/>
+  <line x1="80" y1="236" x2="700" y2="236" stroke="#d7d7d7" stroke-width="1"/>
+  <line x1="80" y1="174" x2="700" y2="174" stroke="#d7d7d7" stroke-width="1"/>
+  <line x1="80" y1="112" x2="700" y2="112" stroke="#d7d7d7" stroke-width="1"/>
+  <line x1="80" y1="50" x2="700" y2="50" stroke="#d7d7d7" stroke-width="1"/>
+
+  <text x="40" y="365" font-family="Arial, sans-serif" font-size="15" fill="#202020">0s</text>
+  <text x="40" y="303" font-family="Arial, sans-serif" font-size="15" fill="#202020">1s</text>
+  <text x="40" y="241" font-family="Arial, sans-serif" font-size="15" fill="#202020">2s</text>
+  <text x="40" y="179" font-family="Arial, sans-serif" font-size="15" fill="#202020">3s</text>
+  <text x="40" y="117" font-family="Arial, sans-serif" font-size="15" fill="#202020">4s</text>
+  <text x="40" y="55" font-family="Arial, sans-serif" font-size="15" fill="#202020">5s</text>
+
+  <line x1="200" y1="322.8" x2="390" y2="324.5" stroke="#0b5ed7" stroke-width="5"/>
+  <line x1="390" y1="324.5" x2="580" y2="66.9" stroke="#0b5ed7" stroke-width="5"/>
+
+  <circle cx="200" cy="322.8" r="6" fill="#0b5ed7"/>
+  <circle cx="390" cy="324.5" r="6" fill="#0b5ed7"/>
+  <circle cx="580" cy="66.9" r="6" fill="#0b5ed7"/>
+
+  <line x1="200" y1="322.8" x2="390" y2="322.8" stroke="#ff4d1a" stroke-width="4"/>
+  <line x1="390" y1="322.8" x2="580" y2="322.8" stroke="#ff4d1a" stroke-width="4"/>
+
+  <line x1="200" y1="322.8" x2="390" y2="324.5" stroke="#f0b400" stroke-width="4"/>
+  <line x1="390" y1="324.5" x2="580" y2="66.9" stroke="#f0b400" stroke-width="4"/>
+
+  <text x="200" y="392" font-family="Arial, sans-serif" font-size="18" fill="#202020" text-anchor="middle">Unit</text>
+  <text x="390" y="392" font-family="Arial, sans-serif" font-size="18" fill="#202020" text-anchor="middle">Integration</text>
+  <text x="580" y="392" font-family="Arial, sans-serif" font-size="18" fill="#202020" text-anchor="middle">E2E</text>
+
+  <text x="200" y="304" font-family="Arial, sans-serif" font-size="15" fill="#202020" text-anchor="middle">0.600s</text>
+  <text x="390" y="306" font-family="Arial, sans-serif" font-size="15" fill="#202020" text-anchor="middle">0.572s</text>
+  <text x="580" y="52" font-family="Arial, sans-serif" font-size="15" fill="#202020" text-anchor="middle">4.728s</text>
+
+  <line x1="745" y1="160" x2="790" y2="160" stroke="#0b5ed7" stroke-width="5"/>
+  <text x="800" y="165" font-family="Arial, sans-serif" font-size="15" fill="#202020">Tempo medio medido</text>
+  <line x1="745" y1="195" x2="790" y2="195" stroke="#ff4d1a" stroke-width="5"/>
+  <text x="800" y="200" font-family="Arial, sans-serif" font-size="15" fill="#202020">Base Unit</text>
+  <line x1="745" y1="230" x2="790" y2="230" stroke="#f0b400" stroke-width="5"/>
+  <text x="800" y="235" font-family="Arial, sans-serif" font-size="15" fill="#202020">Comparativo por camada</text>
+
+  <text x="390" y="28" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#202020" text-anchor="middle">Comparacao de Tempo Medio de Execucao</text>
+</svg>

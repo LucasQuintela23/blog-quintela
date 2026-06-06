@@ -230,3 +230,61 @@ samp {
   @apply text-[1.12rem] leading-8;
 }
 
+.post-content .table-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 1.25rem 0;
+}
+
+.post-content table.table-benchmark {
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+}
+
+.post-content table {
+  display: table;
+  width: 100%;
+  max-width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.98rem;
+}
+
+.post-content th,
+.post-content td {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  vertical-align: top;
+  padding: 0.72rem 0.7rem;
+}
+
+.post-content table.table-legacy-wrap {
+  table-layout: fixed;
+}
+
+.post-content table.table-legacy-wrap th,
+.post-content table.table-legacy-wrap td {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1280px) {
+  .post-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  .post-content table.table-legacy-wrap {
+    display: table;
+    overflow-x: visible;
+    white-space: normal;
+  }
+}
+
