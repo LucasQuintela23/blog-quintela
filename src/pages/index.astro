@@ -29,7 +29,13 @@ const postHref = (slug: string) => `${baseUrl}${slug}/`;
     {
       posts.map((post) => (
         <article class="post-card stagger-reveal py-6 sm:py-7">
-          <h2 class="mb-2 text-center font-serif text-[1.82rem] font-semibold leading-tight text-ink sm:text-[1.96rem]">
+          <h2
+            class:list={[
+              "post-card-title mb-2 text-center font-serif text-[1.62rem] font-semibold leading-tight text-ink sm:text-[1.76rem]",
+              post.data.title.includes("Anatomia da Pirâmide de Testes") && "post-card-title-one-line",
+              post.data.title.includes("A Linha de Produção Não Engana") && "post-card-title-two-lines",
+            ]}
+          >
             <a href={postHref(post.slug)} class="transition hover:text-accent">{post.data.title}</a>
           </h2>
           <p class="mx-auto mb-4 max-w-4xl text-center text-[1rem] leading-relaxed text-muted">{post.data.description}</p>

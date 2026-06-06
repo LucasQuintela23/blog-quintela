@@ -1,6 +1,6 @@
 ---
 title: "Anatomia da Pirâmide de Testes e o Seu Impacto em Entregas de Software"
-pubDate: 2026-06-02T18:00:00
+pubDate: 2026-06-06T18:00:00
 description: "Como a Pirâmide de Testes reduz custo, acelera feedback e aumenta a confiabilidade das entregas em engenharia de software."
 tags:
   - testes
