@@ -1,23 +1,78 @@
 ---
 import "../styles/global.css";
+import { defaultLang, languages, nonDefaultLangs, supportedLangs, type Lang, withLangPrefix } from "../i18n/config";
+import { getUI } from "../i18n/ui";
 
 interface Props {
   title?: string;
   description?: string;
+  lang?: Lang;
 }
 
 const {
   title = "Quintela",
   description = "Blog técnico focado em performance, legibilidade e tipografia editorial.",
+  lang = defaultLang,
 } = Astro.props;
+
+const t = getUI(lang);
 
 const baseUrl = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+
+const toHref = (path: string): string => {
+  const normalizedPath = path.replace(/^\//, "");
+  return normalizedPath ? `${baseUrl}${normalizedPath}` : baseUrl;
+};
+
+const localizedHref = (path: string) => toHref(withLangPrefix(path, lang));
+
+const normalizeRoutePath = (path: string): string => {
+  const withLeadingSlash = path.startsWith("/") ? path : `/${path}`;
+
+  if (withLeadingSlash === "/") {
+    return withLeadingSlash;
+  }
+
+  return withLeadingSlash.endsWith("/") ? withLeadingSlash : `${withLeadingSlash}/`;
+};
+
+const stripBasePath = (path: string): string => {
+  const normalizedBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+
+  if (path === normalizedBase || path === `${normalizedBase}/`) {
+    return "/";
+  }
+
+  if (path.startsWith(`${normalizedBase}/`)) {
+    return path.slice(normalizedBase.length);
+  }
+
+  return path;
+};
+
+const removeLangPrefix = (path: string): string => {
+  for (const candidateLang of nonDefaultLangs) {
+    if (path === `/${candidateLang}` || path === `/${candidateLang}/`) {
+      return "/";
+    }
+
+    if (path.startsWith(`/${candidateLang}/`)) {
+      const withoutPrefix = path.slice(candidateLang.length + 1);
+      return withoutPrefix.startsWith("/") ? withoutPrefix : `/${withoutPrefix}`;
+    }
+  }
+
+  return path;
+};
+
+const currentRoute = normalizeRoutePath(removeLangPrefix(stripBasePath(Astro.url.pathname)));
+const langSwitcherHref = (targetLang: Lang) => toHref(withLangPrefix(currentRoute, targetLang));
 ---
 
 <!doctype html>
-<html lang="pt-BR">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,17 +102,35 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
     <div class="page-shell mx-auto flex min-h-screen w-full max-w-[1160px] flex-col px-4 sm:px-6">
       <header class="sticky top-0 z-20 border-b border-border/80 bg-bg/85 py-5 backdrop-blur supports-[backdrop-filter]:bg-bg/70">
         <div class="flex items-center justify-between">
-          <a href={baseUrl} class="text-xl font-semibold tracking-tight text-ink">Quintela</a>
+          <a href={localizedHref("/")} class="text-xl font-semibold tracking-tight text-ink">{t.siteName}</a>
 
           <nav class="flex items-center gap-4 text-xs uppercase tracking-[0.1em] text-muted sm:text-sm sm:normal-case sm:tracking-normal">
-            <a href={baseUrl} class="nav-link transition">Artigos</a>
-            <a href={`${baseUrl}sobre/`} class="nav-link transition">Sobre</a>
+            <a href={localizedHref("/")} class="nav-link transition">{t.nav.posts}</a>
+            <a href={localizedHref("/sobre/")} class="nav-link transition">{t.nav.about}</a>
+            <div class="inline-flex items-center gap-1 rounded-full border border-border bg-surface/70 px-1 py-1" aria-label={t.nav.languageLabel}>
+              {
+                supportedLangs.map((availableLang) => (
+                  <a
+                    href={langSwitcherHref(availableLang)}
+                    class:list={[
+                      "rounded-full px-2 py-1 text-[0.62rem] font-semibold tracking-[0.08em] transition",
+                      availableLang === lang
+                        ? "bg-accent/20 text-ink"
+                        : "text-muted hover:bg-border/25 hover:text-ink",
+                    ]}
+                    aria-label={`${t.nav.languageLabel}: ${availableLang.toUpperCase()}`}
+                  >
+                    {languages[availableLang]}
+                  </a>
+                ))
+              }
+            </div>
             <a
               href="https://github.com/LucasQuintela23"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface/70 text-muted transition hover:border-accent/50 hover:text-ink"
-              aria-label="GitHub de Lucas Quintela"
+              aria-label={t.nav.githubLabel}
               title="GitHub"
             >
               <svg
@@ -74,7 +147,7 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface/70 text-muted transition hover:border-accent/50 hover:text-ink"
-              aria-label="LinkedIn de Lucas Quintela"
+              aria-label={t.nav.linkedinLabel}
               title="LinkedIn"
             >
               <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor" aria-hidden="true">
@@ -86,9 +159,13 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
                 id="theme-toggle"
                 type="button"
                 class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface/70 text-muted transition hover:border-accent/50 hover:text-ink"
-                aria-label="Abrir menu de tema"
+                aria-label={t.nav.openThemeMenu}
                 aria-expanded="false"
                 aria-controls="theme-menu"
+                data-open-theme-label={t.nav.openThemeMenu}
+                data-theme-light={t.nav.light}
+                data-theme-dark={t.nav.dark}
+                data-theme-system={t.nav.system}
               >
                 <span id="theme-icon-sun" aria-hidden="true">
                   <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -107,18 +184,18 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
                 id="theme-menu"
                 class="absolute right-0 mt-2 hidden w-36 rounded-xl border border-border bg-surface p-1.5 text-[0.95rem] normal-case tracking-normal text-ink shadow-lg"
                 role="menu"
-                aria-label="Selecionar tema"
+                aria-label={t.nav.themeMenuLabel}
               >
                 <button type="button" class="theme-option flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition hover:bg-border/25" data-theme-option="light" role="menuitemradio">
-                  <span>Claro</span>
+                  <span>{t.nav.light}</span>
                   <span class="theme-check hidden" aria-hidden="true">✓</span>
                 </button>
                 <button type="button" class="theme-option flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition hover:bg-border/25" data-theme-option="dark" role="menuitemradio">
-                  <span>Escuro</span>
+                  <span>{t.nav.dark}</span>
                   <span class="theme-check hidden" aria-hidden="true">✓</span>
                 </button>
                 <button type="button" class="theme-option flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition hover:bg-border/25" data-theme-option="system" role="menuitemradio">
-                  <span>Sistema</span>
+                  <span>{t.nav.system}</span>
                   <span class="theme-check hidden" aria-hidden="true">✓</span>
                 </button>
               </div>
@@ -132,7 +209,7 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
       </main>
 
       <footer class="border-t border-border py-7 text-sm text-muted">
-        <p>Todos os direitos reservados - Lucas Quintela</p>
+        <p>{t.footer.rights}</p>
       </footer>
     </div>
 
@@ -144,6 +221,10 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
       const options = Array.from(document.querySelectorAll("[data-theme-option]"));
       const root = document.documentElement;
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const openThemeLabel = button?.getAttribute("data-open-theme-label") ?? "Open theme menu";
+      const lightThemeLabel = button?.getAttribute("data-theme-light") ?? "Light";
+      const darkThemeLabel = button?.getAttribute("data-theme-dark") ?? "Dark";
+      const systemThemeLabel = button?.getAttribute("data-theme-system") ?? "System";
 
       const getStoredMode = () => {
         const mode = localStorage.getItem("theme");
@@ -170,8 +251,8 @@ const baseUrl = import.meta.env.BASE_URL.endsWith("/")
       const setThemeUI = (mode) => {
         if (!button) return;
         const dark = root.classList.contains("dark");
-        button.setAttribute("aria-label", "Abrir menu de tema");
-        button.setAttribute("title", mode === "system" ? "Tema: Sistema" : dark ? "Tema: Escuro" : "Tema: Claro");
+        button.setAttribute("aria-label", openThemeLabel);
+        button.setAttribute("title", mode === "system" ? systemThemeLabel : dark ? darkThemeLabel : lightThemeLabel);
         sunIcon?.classList.toggle("hidden", dark);
         moonIcon?.classList.toggle("hidden", !dark);
 

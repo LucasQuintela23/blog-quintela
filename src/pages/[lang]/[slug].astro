@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PostPage from "../../_includes/pages/PostPage.astro";
+import { nonDefaultLangs } from "../../i18n/config";
+import { getPostsByLang, type BlogPostEntry } from "../../i18n/content";
+
+export async function getStaticPaths() {
+  const postsByLang = await Promise.all(
+    nonDefaultLangs.map(async (lang) => ({
+      lang,
+      posts: await getPostsByLang(lang),
+    })),
+  );
+
+  return postsByLang.flatMap(({ lang, posts }) =>
+    posts.map((post: BlogPostEntry) => ({
+      params: { lang, slug: post.slug },
+      props: { post, lang },
+    })),
+  );
+}
+
+const { post, lang } = Astro.props as {
+  post: CollectionEntry<"blogEn"> | CollectionEntry<"blogEs">;
+  lang: "en" | "es";
+};
+---
+
+<PostPage post={post} lang={lang} />

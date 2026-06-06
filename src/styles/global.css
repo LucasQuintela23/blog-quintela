@@ -158,30 +158,16 @@ samp {
 }
 
 .post-card-title {
-  max-width: 36ch;
+  max-width: 58ch;
   margin-left: auto;
   margin-right: auto;
   text-wrap: balance;
-  min-height: calc(1.2em * 2);
+  line-height: 1.2;
 }
 
-.post-card-title-one-line {
-  max-width: none;
-  min-height: auto;
-  white-space: nowrap;
-  font-size: 1rem;
-  line-height: 1.25;
-}
-
-.post-card-title-two-lines {
-  max-width: 60ch;
-  min-height: auto;
-  white-space: normal;
-}
-
-@media (min-width: 640px) {
-  .post-card-title-one-line {
-    font-size: 1.06rem;
+@media (max-width: 640px) {
+  .post-card-title {
+    max-width: 34ch;
   }
 }
 

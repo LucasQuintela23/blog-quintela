@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { defaultLang, localeByLang, type Lang, withLangPrefix } from "../../i18n/config";
+import { getPostsByLang, sortPostsByDateDesc, type BlogPostEntry } from "../../i18n/content";
+import { getUI } from "../../i18n/ui";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props as Props;
+const t = getUI(lang);
+
+const posts: BlogPostEntry[] = sortPostsByDateDesc(await getPostsByLang(lang));
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString(localeByLang[lang], {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+
+const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+
+const toHref = (path: string) => {
+  const normalized = path.replace(/^\//, "");
+  return normalized ? `${baseUrl}${normalized}` : baseUrl;
+};
+
+const postHref = (slug: string) => toHref(withLangPrefix(`/${slug}/`, lang));
+---
+
+<BaseLayout title={t.home.title} description={t.home.description} lang={lang}>
+  <section class="space-y-1" id="posts-grid">
+    {
+      posts.map((post: BlogPostEntry) => (
+        <article class="post-card stagger-reveal py-6 sm:py-7">
+          <h2
+            class:list={[
+              "post-card-title mb-2 text-center font-serif text-[1.62rem] font-semibold leading-tight text-ink sm:text-[1.76rem]",
+            ]}
+          >
+            <a href={postHref(post.slug)} class="transition hover:text-accent">{post.data.title}</a>
+          </h2>
+          <p class="mx-auto mb-4 max-w-4xl text-center text-[1rem] leading-relaxed text-muted">{post.data.description}</p>
+          <div class="flex flex-wrap items-center justify-center gap-3 text-[0.72rem] tracking-[0.08em] text-muted">
+            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>

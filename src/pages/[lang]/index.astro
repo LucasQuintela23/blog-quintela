@@ -1,0 +1,15 @@
+---
+import HomePage from "../../_includes/pages/HomePage.astro";
+import { nonDefaultLangs } from "../../i18n/config";
+
+export function getStaticPaths() {
+  return nonDefaultLangs.map((lang) => ({
+    params: { lang },
+    props: { lang },
+  }));
+}
+
+const { lang } = Astro.props;
+---
+
+<HomePage lang={lang} />

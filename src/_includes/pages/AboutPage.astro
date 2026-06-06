@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { defaultLang, type Lang } from "../../i18n/config";
+import { getUI } from "../../i18n/ui";
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = defaultLang } = Astro.props as Props;
+const t = getUI(lang);
+const copy = t.aboutPage.copy;
+---
+
+<BaseLayout title={t.aboutPage.title} description={t.aboutPage.description} lang={lang}>
+  <article class="article-shell w-full">
+    <header class="mb-10 border-b border-border pb-7 text-center">
+      <h1 class="mx-auto mb-4 max-w-4xl font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">{copy.heading}</h1>
+    </header>
+
+    <div class="post-content prose prose-neutral max-w-none text-justify dark:prose-invert">
+      {copy.introParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+
+      <h2>{copy.technicalHeading}</h2>
+
+      {copy.technicalParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+
+      <h2>{copy.purposeHeading}</h2>
+
+      {copy.purposeParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,190 @@
+---
+import type { MarkdownHeading } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { BlogPostEntry } from "../../i18n/content";
+import { defaultLang, localeByLang, type Lang } from "../../i18n/config";
+import { getUI } from "../../i18n/ui";
+
+interface Props {
+  post: BlogPostEntry;
+  lang?: Lang;
+}
+
+const { post, lang = defaultLang } = Astro.props as Props;
+const t = getUI(lang);
+
+const { Content, headings } = await post.render();
+const tocHeadings: MarkdownHeading[] = headings.filter(
+  (item: MarkdownHeading) => item.depth === 2 || item.depth === 3,
+);
+
+const formattedDate = post.data.pubDate.toLocaleDateString(localeByLang[lang], {
+  day: "2-digit",
+  month: "long",
+  year: "numeric",
+});
+---
+
+<BaseLayout title={`${post.data.title} | Quintela`} description={post.data.description} lang={lang}>
+  <div class="article-stage">
+    <div id="post-top-sentinel" aria-hidden="true"></div>
+    <article
+      class="article-shell w-full"
+      data-copy-label={t.post.copy}
+      data-copied-label={t.post.copied}
+      data-copy-error-label={t.post.error}
+    >
+      <header class="mb-10 border-b border-border pb-7 text-center">
+        <h1 class="mx-auto mb-4 max-w-4xl font-serif text-4xl font-semibold leading-tight text-ink sm:text-5xl">{post.data.title}</h1>
+        <time class="text-xs uppercase tracking-[0.12em] text-muted" datetime={post.data.pubDate.toISOString()}>
+          {formattedDate}
+        </time>
+      </header>
+
+      <div class="post-content prose prose-neutral max-w-none text-justify dark:prose-invert">
+        <Content />
+      </div>
+    </article>
+
+    {
+      tocHeadings.length > 0 && (
+        <aside class="article-toc article-toc-rail" aria-label={t.post.onThisPage}>
+          <p class="article-toc-title">{t.post.onThisPage}</p>
+          <ul class="article-toc-list">
+            {tocHeadings.map((item) => (
+              <li>
+                <a
+                  href={`#${item.slug}`}
+                  class:list={[
+                    "article-toc-link",
+                    item.depth === 3 && "article-toc-link-nested",
+                  ]}
+                >
+                  {item.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a href="#top" id="toc-back-to-top" class="article-toc-backtop">
+            <span>{t.post.backToTop}</span>
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="m8 14 4-4 4 4"></path>
+            </svg>
+          </a>
+        </aside>
+      )
+    }
+  </div>
+
+  <script>
+    import mermaid from "mermaid";
+
+    const articleShell = document.querySelector(".article-shell");
+    const copyLabel = articleShell?.getAttribute("data-copy-label") ?? "Copy";
+    const copiedLabel = articleShell?.getAttribute("data-copied-label") ?? "Copied";
+    const copyErrorLabel = articleShell?.getAttribute("data-copy-error-label") ?? "Error";
+
+    const codeBlocks = Array.from(document.querySelectorAll("article pre"));
+    const mermaidPreBlocks = codeBlocks.filter((pre) => {
+      const language = pre.getAttribute("data-language");
+      if (language && language.toLowerCase() === "mermaid") return true;
+      return Boolean(pre.querySelector("code.language-mermaid, code.lang-mermaid"));
+    });
+    const tocBackToTop = document.getElementById("toc-back-to-top");
+    const topSentinel = document.getElementById("post-top-sentinel");
+
+    const renderMermaid = async () => {
+      if (mermaidPreBlocks.length === 0) return;
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+        securityLevel: "strict",
+      });
+
+      mermaidPreBlocks.forEach((pre, index) => {
+        if (!pre.parentElement) return;
+        const code = pre.querySelector("code");
+
+        const container = document.createElement("div");
+        container.className = "mermaid";
+        container.id = `mermaid-${index}`;
+        container.textContent = code?.textContent ?? pre.textContent ?? "";
+        pre.replaceWith(container);
+      });
+
+      await mermaid.run({ querySelector: ".mermaid" });
+    };
+
+    const setBackToTopVisibility = (shouldShow: boolean) => {
+      if (!tocBackToTop) return;
+      tocBackToTop.classList.toggle("is-visible", shouldShow);
+    };
+
+    if (topSentinel && "IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          setBackToTopVisibility(!entry.isIntersecting);
+        },
+        { root: null, threshold: 0 },
+      );
+      observer.observe(topSentinel);
+    } else {
+      const onScroll = () => setBackToTopVisibility(window.scrollY > 220);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+
+    tocBackToTop?.addEventListener("click", (event) => {
+      event.preventDefault();
+      tocBackToTop.classList.add("is-clicked");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      setTimeout(() => {
+        tocBackToTop.classList.remove("is-clicked");
+      }, 220);
+    });
+
+    renderMermaid().catch(() => {
+      // If Mermaid parsing fails, keep original source blocks visible.
+    });
+
+    codeBlocks.forEach((pre) => {
+      const language = pre.getAttribute("data-language");
+      if (language && language.toLowerCase() === "mermaid") return;
+      if (pre.querySelector("code.language-mermaid, code.lang-mermaid")) return;
+      if (pre.querySelector(".copy-code")) return;
+
+      pre.classList.add("code-block");
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy-code";
+      button.textContent = copyLabel;
+
+      button.addEventListener("click", async () => {
+        const code = pre.querySelector("code");
+        const content = code?.textContent ?? "";
+
+        try {
+          await navigator.clipboard.writeText(content);
+          button.textContent = copiedLabel;
+          button.classList.add("is-copied");
+          setTimeout(() => {
+            button.textContent = copyLabel;
+            button.classList.remove("is-copied");
+          }, 1200);
+        } catch {
+          button.textContent = copyErrorLabel;
+          setTimeout(() => {
+            button.textContent = copyLabel;
+          }, 1200);
+        }
+      });
+
+      pre.appendChild(button);
+    });
+  </script>
+</BaseLayout>

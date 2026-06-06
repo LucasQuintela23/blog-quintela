@@ -1,49 +1,36 @@
 ---
-import { getCollection, type CollectionEntry } from "astro:content";
-import BaseLayout from "../layouts/BaseLayout.astro";
-
-const posts: CollectionEntry<"blog">[] = (await getCollection("blog")).sort(
-  (a: CollectionEntry<"blog">, b: CollectionEntry<"blog">) =>
-    b.data.pubDate.getTime() - a.data.pubDate.getTime(),
-);
-
-const formatDate = (date: Date) =>
-  date.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+import HomePage from "../_includes/pages/HomePage.astro";
 
 const baseUrl = import.meta.env.BASE_URL.endsWith("/")
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
-
-const postHref = (slug: string) => `${baseUrl}${slug}/`;
+	? import.meta.env.BASE_URL
+	: `${import.meta.env.BASE_URL}/`;
 ---
 
-<BaseLayout
-  title="Quintela | Engenharia de Software"
-  description="Artigos técnicos sobre performance, testes, automação e legibilidade de código."
->
-  <section class="space-y-1" id="posts-grid">
-    {
-      posts.map((post) => (
-        <article class="post-card stagger-reveal py-6 sm:py-7">
-          <h2
-            class:list={[
-              "post-card-title mb-2 text-center font-serif text-[1.62rem] font-semibold leading-tight text-ink sm:text-[1.76rem]",
-              post.data.title.includes("Anatomia da Pirâmide de Testes") && "post-card-title-one-line",
-              post.data.title.includes("A Linha de Produção Não Engana") && "post-card-title-two-lines",
-            ]}
-          >
-            <a href={postHref(post.slug)} class="transition hover:text-accent">{post.data.title}</a>
-          </h2>
-          <p class="mx-auto mb-4 max-w-4xl text-center text-[1rem] leading-relaxed text-muted">{post.data.description}</p>
-          <div class="flex flex-wrap items-center justify-center gap-3 text-[0.72rem] tracking-[0.08em] text-muted">
-            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
-          </div>
-        </article>
-      ))
-    }
-  </section>
-</BaseLayout>
+<HomePage />
+
+<script is:inline define:vars={{ baseUrl }}>
+	(() => {
+		const basePath = baseUrl;
+		const path = window.location.pathname;
+
+		const rootWithSlash = basePath;
+		const rootWithoutSlash = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+		const isRootAccess = path === rootWithSlash || path === rootWithoutSlash;
+
+		if (!isRootAccess) return;
+		if (sessionStorage.getItem("locale-redirect-done") === "1") return;
+
+		const preferred = [...(navigator.languages ?? []), navigator.language]
+			.filter(Boolean)
+			.map((locale) => locale.toLowerCase());
+
+		const target = preferred.find((locale) => locale.startsWith("en") || locale.startsWith("es"));
+
+		sessionStorage.setItem("locale-redirect-done", "1");
+
+		if (!target) return;
+
+		const lang = target.startsWith("en") ? "en" : "es";
+		window.location.replace(`${basePath}${lang}/`);
+	})();
+</script>
