@@ -35,7 +35,7 @@ Vamos dissecar a anatomia de ambas as disciplinas sob a ótica de arquitetura, c
 
 O QA está preocupado com as diretrizes e metodologias que impedem a introdução do bug. Ele atua nas fases onde o código sequer existe.
 
-- **Prevenção de Ambiguidade:** Análise estática de requisitos e critérios de aceitação. Se um requisito de negócio falha em prever o comportamento do sistema quando o payload de um webhook de pagamento chega duplicado ou fora de ordem (problema clássico de concorrência e idempotência), o QA sênior atua ali, refinando a especificação técnico-funcional antes do primeiro git checkout -b.
+- **Prevenção de Ambiguidade:** Análise estática de requisitos e critérios de aceitação. Se um requisito de negócio falha em prever o comportamento do sistema quando o payload de um webhook de pagamento chega duplicado ou fora de ordem (problema clássico de concorrência e idempotência), o QA sênior atua ali, refinando a especificação técnico funcional antes do primeiro git checkout -b.
 - **Arquitetura de Testabilidade (Design for Testability):** O engenheiro de QA atua junto aos arquitetos para garantir que o software seja testável. Isso significa exigir o isolamento de camadas, a aplicação correta de injeção de dependência para viabilizar mocks eficientes e a existência de feature toggles granulares para deploys cirúrgicos.
 - **Governança de Dados de Teste (TDM):** Definição de como o estado do banco de dados será gerenciado nas suites automatizadas. O QA garante a criação de estratégias determinísticas de setup e teardown de dados, eliminando o fantasma da contaminação de estados (data poisoning) entre execuções concorrentes nos agentes do pipeline de CI.
 
@@ -59,7 +59,7 @@ O QC é a execução material. É a verificação pontual do artefato construíd
 
 Aqui reside o veneno moderno: muitas lideranças acreditam que implementar automação de testes com ferramentas de inteligência artificial ou plataformas codeless transforma o QC em QA automaticamente. É uma mentira conveniente de marketing de ferramentas.
 
-Se você utiliza uma ferramenta de IA generativa para ler a sua tela e criar testes de UI automatizados baseados em adivinhação probabilística de localizadores do DOM, você está apenas acelerando a criação de scripts de Controle de Qualidade ruins. Você está gerando um pesadelo de manutenção a longo prazo. Quando a interface mudar, os custos de tokens e latência de rede para que o modelo faça a auto-correção (self-healing) vão estourar o orçamento do projeto, enquanto a lógica de negócio subjacente - as regras complexas de domínio - continuará sem validação rigorosa nas camadas inferiores (unidade e integração).
+Se você utiliza uma ferramenta de IA generativa para ler a sua tela e criar testes de UI automatizados baseados em adivinhação probabilística de localizadores do DOM, você está apenas acelerando a criação de scripts de Controle de Qualidade ruins. Você está gerando um pesadelo de manutenção a longo prazo. Quando a interface mudar, os custos de tokens e latência de rede para que o modelo faça a autocorreção (selfhealing) vão estourar o orçamento do projeto, enquanto a lógica de negócio subjacente as regras complexas de domínio continuará sem validação rigorosa nas camadas inferiores (unidade e integração).
 
 Automatizar o caos não gera qualidade; gera apenas caos parametrizado e computação desperdiçada gastando CPU e memória no seu cluster Kubernetes de CI/CD.
 

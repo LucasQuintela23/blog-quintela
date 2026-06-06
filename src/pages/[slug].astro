@@ -72,12 +72,42 @@ const formattedDate = post.data.pubDate.toLocaleDateString("pt-BR", {
     }
   </div>
 
-  <script is:inline>
-    const codeBlocks = document.querySelectorAll("article pre");
+  <script>
+    import mermaid from "mermaid";
+
+    const codeBlocks = Array.from(document.querySelectorAll("article pre"));
+    const mermaidPreBlocks = codeBlocks.filter((pre) => {
+      const language = pre.getAttribute("data-language");
+      if (language && language.toLowerCase() === "mermaid") return true;
+      return Boolean(pre.querySelector("code.language-mermaid, code.lang-mermaid"));
+    });
     const tocBackToTop = document.getElementById("toc-back-to-top");
     const topSentinel = document.getElementById("post-top-sentinel");
 
-    const setBackToTopVisibility = (shouldShow) => {
+    const renderMermaid = async () => {
+      if (mermaidPreBlocks.length === 0) return;
+
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+        securityLevel: "strict",
+      });
+
+      mermaidPreBlocks.forEach((pre, index) => {
+        if (!pre.parentElement) return;
+        const code = pre.querySelector("code");
+
+        const container = document.createElement("div");
+        container.className = "mermaid";
+        container.id = `mermaid-${index}`;
+        container.textContent = code?.textContent ?? pre.textContent ?? "";
+        pre.replaceWith(container);
+      });
+
+      await mermaid.run({ querySelector: ".mermaid" });
+    };
+
+    const setBackToTopVisibility = (shouldShow: boolean) => {
       if (!tocBackToTop) return;
       tocBackToTop.classList.toggle("is-visible", shouldShow);
     };
@@ -107,7 +137,14 @@ const formattedDate = post.data.pubDate.toLocaleDateString("pt-BR", {
       }, 220);
     });
 
+    renderMermaid().catch(() => {
+      // If Mermaid parsing fails, keep original source blocks visible.
+    });
+
     codeBlocks.forEach((pre) => {
+      const language = pre.getAttribute("data-language");
+      if (language && language.toLowerCase() === "mermaid") return;
+      if (pre.querySelector("code.language-mermaid, code.lang-mermaid")) return;
       if (pre.querySelector(".copy-code")) return;
 
       pre.classList.add("code-block");
